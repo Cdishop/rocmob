@@ -78,6 +78,20 @@ h1 {
   color: #777;
 }
 
+.team-role {
+  font-size: 15px;
+  color: #888;
+  margin: 0 0 10px 0;
+  line-height: 1.5;
+}
+
+.team-desc {
+  font-size: 15px;
+  color: #aaa;
+  margin: 0;
+  line-height: 1.5;
+}
+
 .navbar {
   position: fixed;
   bottom: 0;
