@@ -74,6 +74,10 @@ h1 {
   margin: 0 0 6px 0;
 }
 
+.team-member > div {
+  color: #777;
+}
+
 .navbar {
   position: fixed;
   bottom: 0;
@@ -92,9 +96,18 @@ h1 {
   padding: 10px 26px;
   border-radius: 10px;
   font-weight: 600;
+  transition: background 0.2s;
+}
+
+.navbutton:hover {
+  background: #934407;
 }
 
 .navbutton.secondary {
   background: #ede9e4;
   color: #333;
+}
+
+.navbutton.secondary:hover {
+  background: #ddd8d1;
 }
