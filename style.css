@@ -219,3 +219,41 @@ h1 {
 .navbutton.secondary:hover {
   background: #ddd8d1;
 }
+/* HOME ORBIT VISUALIZATION
+   This block is intentionally additive. It does not replace the existing
+   header, card, team, project, footer, or fixed navbar styles above. */
+
+.orb-section {
+  width: 100%;
+  height: 280px;
+  margin: 42px auto 8px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(180,83,9,0.18), transparent 42%),
+    linear-gradient(135deg, #151515, #23201d 48%, #111111);
+  box-shadow: 0 18px 44px rgba(0,0,0,0.16);
+}
+
+.orb-section::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: 21px;
+  border: 1px solid rgba(255,255,255,0.08);
+  pointer-events: none;
+}
+
+#orbCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@media (max-width: 640px) {
+  .orb-section {
+    height: 230px;
+    border-radius: 18px;
+  }
+}

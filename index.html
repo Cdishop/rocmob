@@ -27,12 +27,10 @@ Research on cooperation and modern organizational behavior
 </div>
 
 <p>
-
 Organizational theory on cooperation was developed by studying face-to-face, manufacturing-style work arrangements. The RocMob examines how contemporary work environments (e.g., remote jobs, asynchronous teamwork, AI-supported work) influence employees’ abilities to cooperate, support one another, and remain productive.
-
 </p>
 
-<div class="orb-section">
+<div class="orb-section" aria-label="Animated visualization of distributed cooperation and asynchronous handoffs">
   <canvas id="orbCanvas"></canvas>
 </div>
 
@@ -51,82 +49,155 @@ Organizational theory on cooperation was developed by studying face-to-face, man
 </div>
 
 <script>
-
 const canvas = document.getElementById("orbCanvas");
 const ctx = canvas.getContext("2d");
 
+const nodes = [];
+const handoffs = [];
+const totalNodes = 9;
+
 function resizeCanvas() {
-  canvas.width = canvas.offsetWidth;
-  canvas.height = 260;
+  const ratio = window.devicePixelRatio || 1;
+  const width = canvas.offsetWidth;
+  const height = canvas.offsetHeight;
+
+  canvas.width = width * ratio;
+  canvas.height = height * ratio;
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+}
+
+function setupNodes() {
+  nodes.length = 0;
+
+  for (let i = 0; i < totalNodes; i++) {
+    nodes.push({
+      angle: (Math.PI * 2 / totalNodes) * i,
+      radiusX: 78 + (i % 3) * 32,
+      radiusY: 36 + (i % 3) * 18,
+      speed: 0.0014 + (i % 4) * 0.00035,
+      size: 3.5 + (i % 2),
+      pauseUntil: 0
+    });
+  }
+}
+
+function drawNode(x, y, size) {
+  ctx.beginPath();
+  ctx.arc(x, y, size + 5, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(245, 158, 11, 0.10)";
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(x, y, size, 0, Math.PI * 2);
+  ctx.fillStyle = "#f59e0b";
+  ctx.fill();
+}
+
+function drawHandoff(from, to, progress) {
+  const x = from.x + (to.x - from.x) * progress;
+  const y = from.y + (to.y - from.y) * progress;
+
+  ctx.beginPath();
+  ctx.moveTo(from.x, from.y);
+  ctx.lineTo(to.x, to.y);
+  ctx.strokeStyle = "rgba(245, 158, 11, 0.13)";
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(x, y, 2.4, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(255, 237, 213, 0.95)";
+  ctx.fill();
+}
+
+function draw(timestamp) {
+  const width = canvas.offsetWidth;
+  const height = canvas.offsetHeight;
+  const centerX = width / 2;
+  const centerY = height / 2;
+
+  ctx.clearRect(0, 0, width, height);
+
+  const gradient = ctx.createRadialGradient(centerX, centerY, 20, centerX, centerY, width / 2);
+  gradient.addColorStop(0, "rgba(245, 158, 11, 0.13)");
+  gradient.addColorStop(1, "rgba(245, 158, 11, 0)");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, width, height);
+
+  [46, 74, 104, 136].forEach((r, i) => {
+    ctx.beginPath();
+    ctx.ellipse(centerX, centerY, r * 1.55, r * 0.72, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(255, 237, 213, ${0.045 - i * 0.006})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+
+  const positions = nodes.map((node, i) => {
+    if (timestamp > node.pauseUntil) {
+      node.angle += node.speed;
+      if (Math.random() < 0.0015) node.pauseUntil = timestamp + 900 + Math.random() * 1400;
+    }
+
+    return {
+      x: centerX + Math.cos(node.angle) * node.radiusX,
+      y: centerY + Math.sin(node.angle) * node.radiusY,
+      size: node.size,
+      index: i
+    };
+  });
+
+  positions.forEach((a, i) => {
+    positions.slice(i + 1).forEach(b => {
+      const distance = Math.hypot(a.x - b.x, a.y - b.y);
+      if (distance < 95) {
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = `rgba(255, 237, 213, ${0.12 * (1 - distance / 95)})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    });
+  });
+
+  if (handoffs.length < 4 && Math.random() < 0.018) {
+    const fromIndex = Math.floor(Math.random() * positions.length);
+    let toIndex = Math.floor(Math.random() * positions.length);
+    if (toIndex === fromIndex) toIndex = (toIndex + 1) % positions.length;
+
+    handoffs.push({
+      fromIndex,
+      toIndex,
+      progress: 0,
+      speed: 0.008 + Math.random() * 0.006
+    });
+  }
+
+  for (let i = handoffs.length - 1; i >= 0; i--) {
+    const handoff = handoffs[i];
+    handoff.progress += handoff.speed;
+
+    if (handoff.progress >= 1) {
+      handoffs.splice(i, 1);
+    } else {
+      drawHandoff(positions[handoff.fromIndex], positions[handoff.toIndex], handoff.progress);
+    }
+  }
+
+  positions.forEach(node => drawNode(node.x, node.y, node.size));
+
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, 5.5, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(255, 237, 213, 0.9)";
+  ctx.fill();
+
+  requestAnimationFrame(draw);
 }
 
 resizeCanvas();
+setupNodes();
 window.addEventListener("resize", resizeCanvas);
-
-const nodes = [];
-const totalNodes = 7;
-
-for (let i = 0; i < totalNodes; i++) {
-  nodes.push({
-    angle: Math.random() * Math.PI * 2,
-    radius: 60 + Math.random() * 50,
-    speed: 0.002 + Math.random() * 0.002
-  });
-}
-
-function draw() {
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  const centerX = canvas.width / 2;
-  const centerY = canvas.height / 2;
-
-  // center orb
-  ctx.beginPath();
-  ctx.arc(centerX, centerY, 6, 0, Math.PI * 2);
-  ctx.fillStyle = "#111";
-  ctx.fill();
-
-  nodes.forEach(node => {
-
-    node.angle += node.speed;
-
-    const x = centerX + Math.cos(node.angle) * node.radius;
-    const y = centerY + Math.sin(node.angle) * node.radius;
-
-    // orbit rings
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, node.radius, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(0,0,0,0.05)";
-    ctx.stroke();
-
-    // node
-    ctx.beginPath();
-    ctx.arc(x, y, 3.5, 0, Math.PI * 2);
-    ctx.fillStyle = "#b45309";
-    ctx.fill();
-
-    // occasional coordination pulse
-    if (Math.random() < 0.02) {
-
-      ctx.beginPath();
-      ctx.moveTo(centerX, centerY);
-      ctx.lineTo(x, y);
-
-      ctx.strokeStyle = "rgba(180,83,9,0.25)";
-      ctx.lineWidth = 1.2;
-      ctx.stroke();
-
-    }
-
-  });
-
-  requestAnimationFrame(draw);
-
-}
-
-draw();
-
+requestAnimationFrame(draw);
 </script>
 
 </body>
