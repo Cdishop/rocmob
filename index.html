@@ -8,10 +8,13 @@
 <link rel="stylesheet" href="style.css">
 
 <style>
+
 body {
   background: #08070A;
   color: #F0EAE2;
 }
+
+/* Canvas background layer */
 
 canvas {
   position: fixed;
@@ -21,15 +24,20 @@ canvas {
   z-index: 0;
 }
 
+/* Keep original layout above canvas */
+
 .container {
   position: relative;
   z-index: 2;
 }
 
-.navbar {
-  background: transparent;
-  z-index: 3;
+/* Paragraph tone matches orbit version */
+
+.container p {
+  color: #8A7E72;
 }
+
+/* Divider accent adjustment for dark mode */
 
 .subtitle {
   color: #C9875A;
@@ -40,7 +48,15 @@ canvas {
   background: #C9875A;
 }
 
+/* Navbar floats above canvas */
+
+.navbar {
+  background: transparent;
+  z-index: 3;
+}
+
 </style>
+
 </head>
 
 <body>
@@ -71,14 +87,18 @@ Organizational theory on cooperation was developed by studying face-to-face, man
 
 </div>
 
+
 <div class="navbar">
+
 <a class="navbutton" href="index.html">Home</a>
 <a class="navbutton secondary" href="team.html">Team</a>
 <a class="navbutton secondary" href="projects.html">Projects</a>
+
 </div>
 
 
 <script>
+
 (() => {
 
 const canvas = document.getElementById("orbitCanvas");
@@ -99,10 +119,12 @@ canvas.height = H * dpr;
 ctx.setTransform(dpr,0,0,dpr,0,0);
 
 /* LOWER THIRD CENTER POSITION */
+
 cx = W * 0.5;
 cy = H * 0.68;
 
 }
+
 
 const rings = [
 {radius:60,count:4,speed:0.4,size:3,opacity:0.9},
@@ -113,7 +135,8 @@ const rings = [
 {radius:480,count:22,speed:-0.05,size:1.5,opacity:0.18}
 ];
 
-const particles=[];
+
+const particles = [];
 
 for(const ring of rings){
 
@@ -133,6 +156,7 @@ wobbleSpeed:0.5+Math.random()*1.5
 particles.push(ringParts);
 
 }
+
 
 function drawConnections(time){
 
@@ -184,10 +208,12 @@ ctx.stroke();
 
 }
 
+
 function loop(time){
 
 ctx.fillStyle="#08070A";
 ctx.fillRect(0,0,W,H);
+
 
 let grad=ctx.createRadialGradient(cx,cy,0,cx,cy,120);
 
@@ -197,14 +223,16 @@ grad.addColorStop(1,"rgba(201,135,90,0)");
 ctx.fillStyle=grad;
 ctx.fillRect(0,0,W,H);
 
+
 ctx.beginPath();
 ctx.arc(cx,cy,5,0,Math.PI*2);
 
 ctx.fillStyle="rgba(201,135,90,0.9)";
-
 ctx.fill();
 
+
 drawConnections(time);
+
 
 for(let r=0;r<rings.length;r++){
 
@@ -215,10 +243,10 @@ ctx.beginPath();
 ctx.ellipse(cx,cy,ring.radius,ring.radius*0.45,0,0,Math.PI*2);
 
 ctx.strokeStyle=`rgba(201,135,90,${ring.opacity*0.12})`;
-
 ctx.lineWidth=0.5;
 
 ctx.stroke();
+
 
 for(const p of particles[r]){
 
@@ -227,7 +255,6 @@ let angle=p.angle+time*0.001*ring.speed;
 let wobble=Math.sin(time*0.001*p.wobbleSpeed+p.wobble)*p.wobbleAmp;
 
 let x=cx+Math.cos(angle)*(ring.radius+wobble);
-
 let y=cy+Math.sin(angle)*(ring.radius+wobble)*0.45;
 
 ctx.beginPath();
@@ -246,6 +273,7 @@ requestAnimationFrame(loop);
 
 }
 
+
 window.addEventListener("resize",resize);
 
 resize();
@@ -253,7 +281,9 @@ resize();
 requestAnimationFrame(loop);
 
 })();
+
 </script>
+
 
 </body>
 </html>
