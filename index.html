@@ -4,19 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="RocMob at Auburn University | Christopher Dishop | Department of Psychological Sciences.">
-<title>RocMob</title>
-
+<title>RocMob | Auburn University | Christopher Dishop</title>
+<link rel="canonical" href="https://cdishop.github.io/rocmob/">
 <link rel="stylesheet" href="style.css">
-
 <style>
-
 body {
   background: #08070A;
   color: #F0EAE2;
 }
-
-/* Canvas background layer */
-
 canvas {
   position: fixed;
   inset: 0;
@@ -24,26 +19,16 @@ canvas {
   height: 100%;
   z-index: 0;
 }
-
-/* Keep original layout above canvas */
-
 .container {
   position: relative;
   z-index: 2;
 }
-
-/* Paragraph tone matches orbit version */
-
 .container p {
   color: #8A7E72;
 }
-
-/* Divider accent adjustment for dark mode */
-
 .subtitle {
   color: #C9875A;
 }
-
 .divider-line-left {
   background: linear-gradient(
     to right,
@@ -52,7 +37,6 @@ canvas {
     #C9875A
   );
 }
-
 .divider-line-right {
   background: linear-gradient(
     to right,
@@ -61,30 +45,19 @@ canvas {
     #08070A
   );
 }
-
-/* Navbar floats above canvas */
-
 .navbar {
   background: transparent;
   z-index: 3;
 }
-
 </style>
-
 </head>
-
 <body>
-
 <canvas id="orbitCanvas"></canvas>
-
 <div class="container">
-
 <h1>RocMob</h1>
-
 <div class="subtitle">
 Research on cooperation and modern organizational behavior
 </div>
-
 <div class="divider">
   <div class="divider-line-left"></div>
   <svg class="divider-slashes" viewBox="0 0 30 12" xmlns="http://www.w3.org/2000/svg">
@@ -94,52 +67,30 @@ Research on cooperation and modern organizational behavior
   </svg>
   <div class="divider-line-right"></div>
 </div>
-
 <p>
-Organizational theory on cooperation was developed by studying face-to-face, manufacturing-style work arrangements. The RocMob examines how contemporary work environments (e.g., remote jobs, asynchronous teamwork, AI-supported work) influence employees’ abilities to cooperate, support one another, and remain productive.
+Organizational theory on cooperation was developed by studying face-to-face, manufacturing-style work arrangements. The RocMob examines how contemporary work environments (e.g., remote jobs, asynchronous teamwork, AI-supported work) influence employees' abilities to cooperate, support one another, and remain productive.
 </p>
-
 </div>
-
-
 <div class="navbar">
-
 <a class="navbutton" href="index.html">Home</a>
 <a class="navbutton secondary" href="team.html">Team</a>
 <a class="navbutton secondary" href="projects.html">Projects</a>
-
 </div>
-
-
 <script>
-
 (() => {
-
 const canvas = document.getElementById("orbitCanvas");
 const ctx = canvas.getContext("2d");
-
 let W, H, cx, cy, dpr;
-
 function resize(){
-
 dpr = window.devicePixelRatio || 1;
-
 W = window.innerWidth;
 H = window.innerHeight;
-
 canvas.width = W * dpr;
 canvas.height = H * dpr;
-
 ctx.setTransform(dpr,0,0,dpr,0,0);
-
-/* LOWER THIRD CENTER POSITION */
-
 cx = W * 0.5;
 cy = H * 0.68;
-
 }
-
-
 const rings = [
 {radius:60,count:4,speed:0.4,size:3,opacity:0.9},
 {radius:120,count:7,speed:-0.25,size:2.5,opacity:0.7},
@@ -148,156 +99,85 @@ const rings = [
 {radius:370,count:18,speed:0.08,size:1.8,opacity:0.28},
 {radius:480,count:22,speed:-0.05,size:1.5,opacity:0.18}
 ];
-
-
 const particles = [];
-
 for(const ring of rings){
-
 let ringParts=[];
-
 for(let i=0;i<ring.count;i++){
-
 ringParts.push({
 angle:(Math.PI*2/ring.count)*i+Math.random()*0.3,
 wobble:Math.random()*Math.PI*2,
 wobbleAmp:3+Math.random()*8,
 wobbleSpeed:0.5+Math.random()*1.5
 });
-
 }
-
 particles.push(ringParts);
-
 }
-
-
 function drawConnections(time){
-
 let t=time*0.001;
-
 for(let r=0;r<rings.length-1;r++){
-
 let ringA=rings[r];
 let ringB=rings[r+1];
-
 let partsA=particles[r];
 let partsB=particles[r+1];
-
 for(const a of partsA){
-
 let ax=cx+Math.cos(a.angle+t*ringA.speed)*ringA.radius;
 let ay=cy+Math.sin(a.angle+t*ringA.speed)*ringA.radius*0.45;
-
 for(const b of partsB){
-
 let bx=cx+Math.cos(b.angle+t*ringB.speed)*ringB.radius;
 let by=cy+Math.sin(b.angle+t*ringB.speed)*ringB.radius*0.45;
-
 let dx=ax-bx;
 let dy=ay-by;
-
 let dist=Math.sqrt(dx*dx+dy*dy);
-
 if(dist<100){
-
 let alpha=(1-dist/100)*0.08;
-
 ctx.beginPath();
 ctx.moveTo(ax,ay);
 ctx.lineTo(bx,by);
-
 ctx.strokeStyle=`rgba(201,135,90,${alpha})`;
 ctx.lineWidth=0.6;
-
 ctx.stroke();
-
 }
-
 }
-
 }
-
 }
-
 }
-
-
 function loop(time){
-
 ctx.fillStyle="#08070A";
 ctx.fillRect(0,0,W,H);
-
-
 let grad=ctx.createRadialGradient(cx,cy,0,cx,cy,120);
-
 grad.addColorStop(0,"rgba(201,135,90,0.12)");
 grad.addColorStop(1,"rgba(201,135,90,0)");
-
 ctx.fillStyle=grad;
 ctx.fillRect(0,0,W,H);
-
-
 ctx.beginPath();
 ctx.arc(cx,cy,5,0,Math.PI*2);
-
 ctx.fillStyle="rgba(201,135,90,0.9)";
 ctx.fill();
-
-
 drawConnections(time);
-
-
 for(let r=0;r<rings.length;r++){
-
 let ring=rings[r];
-
 ctx.beginPath();
-
 ctx.ellipse(cx,cy,ring.radius,ring.radius*0.45,0,0,Math.PI*2);
-
 ctx.strokeStyle=`rgba(201,135,90,${ring.opacity*0.12})`;
 ctx.lineWidth=0.5;
-
 ctx.stroke();
-
-
 for(const p of particles[r]){
-
 let angle=p.angle+time*0.001*ring.speed;
-
 let wobble=Math.sin(time*0.001*p.wobbleSpeed+p.wobble)*p.wobbleAmp;
-
 let x=cx+Math.cos(angle)*(ring.radius+wobble);
 let y=cy+Math.sin(angle)*(ring.radius+wobble)*0.45;
-
 ctx.beginPath();
-
 ctx.arc(x,y,ring.size,0,Math.PI*2);
-
 ctx.fillStyle=`rgba(240,234,226,${ring.opacity})`;
-
 ctx.fill();
-
 }
-
 }
-
 requestAnimationFrame(loop);
-
 }
-
-
 window.addEventListener("resize",resize);
-
 resize();
-
 requestAnimationFrame(loop);
-
 })();
-
 </script>
-
-
 </body>
 </html>
